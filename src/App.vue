@@ -1,7 +1,7 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <img id="book-icon" alt="Vue logo" src="https://www.graphicsfuel.com/wp-content/uploads/2012/07/books-icon-512.png">
+    <HelloWorld msg="Book Tracker"/>
   </div>
 </template>
 
@@ -24,5 +24,9 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+}
+#book-icon {
+  width: 200px;
+  height: 200px;
 }
 </style>
