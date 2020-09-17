@@ -1,25 +1,25 @@
 <template>
-  <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>Keep track of the books you read.</p>
-
-
-
-
+  <div id="app">
+    <h3>To Read</h3>
+    <span>Total: {{toreadcount}}</span>
+    <ul>
+      <li>Book Title</li>
+      <li>Book Title</li>
+    </ul>
   </div>
 </template>
 
 <script>
+
 export default {
-  name: "HelloWorld",
+  name: 'Toread',
   props: {
-    msg: String,
-  },
-};
+      toreadcount: Number
+  }
+}
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style>
 h3 {
   margin: 40px 0 0;
 }
