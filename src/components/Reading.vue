@@ -8,6 +8,32 @@
         <md-input class="formboxes" v-model="inline"></md-input>
         <md-button class="md-raised md-primary md-mini formboxes">Add + </md-button>
       </md-field>
+<md-list>
+        <md-list-item
+          class="listofbooks"
+          v-for="book in books"
+          v-bind:key="book.id"
+          @click="alert"
+        >{{book.title}}</md-list-item>
+      </md-list>
+      <md-button
+        v-on:click="readingbook"
+        class="md-raised green-butn md-mini formboxes"
+      >Finished Reading</md-button>
+      <md-button v-on:click="deletebook" class="md-raised md-accent md-mini formboxes">Delete</md-button>
+
+
+
+
+
+
+
+
+
+
+
+
+
     </form>
     <ul>
       <li>Book Title</li>
