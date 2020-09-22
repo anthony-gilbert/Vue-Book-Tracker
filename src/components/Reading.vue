@@ -1,7 +1,14 @@
 <template>
   <div id="app">
     <h3>Reading</h3>
-    <span>Total: {{readingcount}}</span>
+    <p>Total: {{readingcount}}</p>
+    <form id="formbox" @submit="onSubmit">
+      <md-field class="formboxes" md-inline>
+        <label class="formboxes"> Add a book you are reading</label>
+        <md-input class="formboxes" v-model="inline"></md-input>
+        <md-button class="md-raised md-primary md-mini formboxes">Add + </md-button>
+      </md-field>
+    </form>
     <ul>
       <li>Book Title</li>
       <li>Book Title</li>
@@ -17,7 +24,8 @@
 export default {
   name: 'Reading',
   props: {
-      readingcount: Number
+    readingcount: Number,
+    readinglist: []
   }
 }
 </script>

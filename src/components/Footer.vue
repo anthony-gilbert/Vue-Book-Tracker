@@ -10,7 +10,11 @@ export default {
   name: 'Footer',
   props: {}
 }
+
 </script>
+
+
+
 
 <style>
 h3 {

@@ -2,16 +2,12 @@
   <div class="hello">
     <h1>{{ msg }}</h1>
     <p>Keep track of the books you read.</p>
-
-
-
-
   </div>
 </template>
 
 <script>
 export default {
-  name: "HelloWorld",
+  name: "Header",
   props: {
     msg: String,
   },
