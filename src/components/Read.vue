@@ -39,7 +39,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 h3 {
   margin: 40px 0 0;
 }
@@ -53,5 +53,22 @@ li {
 }
 a {
   color: #42b983;
+}
+#formbox {
+  padding-left: 20%;
+  padding-right: 20%;
+}
+.formboxes {
+  background-color: white;
+}
+.green-butn {
+  background-color: yellowgreen !important;
+  color: white !important;
+}
+label {
+  padding-left: 1em;
+}
+.addbookbutn {
+  margin-top: -10px;
 }
 </style>

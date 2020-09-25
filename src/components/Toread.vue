@@ -5,8 +5,11 @@
     <form id="formbox" @submit="onSubmit">
       <md-field class="formboxes" md-inline>
         <label class="formboxes">Add a book you want to read</label>
-        <md-input id="inputfield" value="" class="formboxes" v-model="inline"></md-input>
-        <md-button v-on:click="addedbook" class="md-raised md-primary md-mini formboxes">Add +</md-button>
+        <md-input id="inputfield" value class="formboxes" v-model="inline" :value="value"></md-input>
+        <md-button
+          v-on:click="addedbook"
+          class="md-raised md-primary md-mini addbookbutn formboxes"
+        >Add +</md-button>
       </md-field>
       <md-list>
         <md-list-item
@@ -26,32 +29,56 @@
 </template>
 
 <script lang="ts">
+let nextToreadId = 1;
+
 export default {
   name: "Toread",
   props: {
     toreadcount: Number,
+    value: {
+      type: String,
+      default: '',
+    }
   },
   data() {
     return {
-      books: [{ title: "Harry Potter" }, { title: "The Giver" }],
+      newToreadText: "",
+      books: [
+        { 
+          id: nextToreadId++,
+          title: "Harry Potter" 
+        },
+        {
+          id: nextToreadId++,
+          title: "The Giver"
+        }
+      ],
     };
   },
   methods: {
-    addedbook: function (event) {
+    addedbook() {
+      const trimmedText = this.newToreadText.trim();
       const inputfromfield = document.getElementById('inputfield').value;
       console.log(inputfromfield);
+
+      if (trimmedText) {
+        this.books.push({
+          title: trimmedText
+        });
+        this.newToreadText = "";
+      }
     },
-    readingbook: function (event) {
+    readingbook: function () {
       console.log("added book to reading list");
     },
-    deletebook: function (event) {
+    deletebook: function () {
       console.log("deleted book from list");
     },
   },
 };
 </script>
 
-<style>
+<style scoped>
 h3 {
   margin: 40px 0 0;
 }
@@ -71,5 +98,8 @@ a {
 }
 label {
   padding-left: 1em;
+}
+.addbookbutn {
+  margin-top: -10px;
 }
 </style>
