@@ -36,29 +36,38 @@ export default {
   name: "Toread",
   props: {
     toreadcount: Number,
-    title: String,
     value: {
       type: String,
-      default: ''
+      default: '',
     }
   },
   data() {
     return {
       newToreadText: "",
-      books: [],
+      books: [
+        { 
+          id: nextToreadId++,
+          title: "Harry Potter" 
+        },
+        {
+          id: nextToreadId++,
+          title: "The Giver"
+        }
+      ],
     };
   },
   methods: {
     addedbook() {
-      const trimmedText = this.newToreadText.trim();
+      const trimmedText = this.newToReadText.trim();
       const inputfromfield = document.getElementById('inputfield').value;
       console.log(inputfromfield);
 
+      if (trimmedText) {
         this.books.push({
-          id: nextToreadId++,
           title: inputfromfield
         });
-        this.newToreadText = "";
+        this.newToReadText = "";
+      }
     },
     readingbook: function () {
       console.log("added book to reading list");
