@@ -5,7 +5,7 @@
     <form id="formbox" @submit="onSubmit">
       <md-field class="formboxes" md-inline>
         <label class="formboxes">Add a book you want to read</label>
-        <md-input id="inputfield" value class="formboxes" v-model="inline" :value="value"></md-input>
+        <md-input id="inputfield" value class="formboxes" v-model="inline"></md-input>
         <md-button
           v-on:click="addedbook"
           class="md-raised md-primary md-mini addbookbutn formboxes"
@@ -16,6 +16,7 @@
           class="listofbooks"
           v-for="book in books"
           v-bind:key="book.id"
+          v-bind:title="book.title"
           @click="alert"
         >{{book.title}}</md-list-item>
       </md-list>
@@ -35,24 +36,16 @@ export default {
   name: "Toread",
   props: {
     toreadcount: Number,
+    title: String,
     value: {
       type: String,
-      default: '',
+      default: ''
     }
   },
   data() {
     return {
       newToreadText: "",
-      books: [
-        { 
-          id: nextToreadId++,
-          title: "Harry Potter" 
-        },
-        {
-          id: nextToreadId++,
-          title: "The Giver"
-        }
-      ],
+      books: [],
     };
   },
   methods: {
@@ -61,12 +54,11 @@ export default {
       const inputfromfield = document.getElementById('inputfield').value;
       console.log(inputfromfield);
 
-      if (trimmedText) {
         this.books.push({
-          title: trimmedText
+          id: nextToreadId++,
+          title: inputfromfield
         });
         this.newToreadText = "";
-      }
     },
     readingbook: function () {
       console.log("added book to reading list");
