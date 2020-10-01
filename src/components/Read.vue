@@ -17,7 +17,7 @@
           v-for="book in books"
           v-bind:key="book.id"
           v-bind:title="book.title"
-          @click="alert"
+          @click="addedbook"
         >{{book.title}}</md-list-item>
       </md-list>
       <md-button v-on:click="deletebook" class="md-raised md-accent md-mini formboxes">Delete</md-button>
@@ -26,7 +26,7 @@
 </template>
 
 <script lang="ts">
-let nextToreadId = 1;
+// let nextToreadId = 1;
 
 export default {
   name: "Toread",
@@ -46,15 +46,10 @@ export default {
   },
   methods: {
     addedbook() {
-      const trimmedText = this.newToreadText.trim();
-      const inputfromfield = document.getElementById("inputfield").value;
-      console.log(inputfromfield);
+      
+      console.log('book added');
 
-      this.books.push({
-        id: nextToreadId++,
-        title: inputfromfield,
-      });
-      this.newToreadText = "";
+      
     },
     deletebook: function () {
       console.log("deleted book from list");

@@ -5,7 +5,8 @@
     <form id="formbox" @submit="onSubmit">
       <md-field class="formboxes" md-inline>
         <label class="formboxes">Add a book you want to read</label>
-        <md-input id="inputfield" value class="formboxes" v-model="inline"></md-input>
+        <md-input @keydown.enter="addedbook" v-model="newToreadText " ></md-input>
+    
         <md-button
           v-on:click="addedbook"
           class="md-raised md-primary md-mini addbookbutn formboxes"
@@ -30,41 +31,43 @@
 </template>
 
 <script lang="ts">
-let nextToreadId = 1;
+
+// let newToreadId = 1;
 
 export default {
   name: "Toread",
   props: {
-    toreadcount: Number,
     value: {
       type: String,
       default: '',
     }
   },
+  computed: {
+    listeners() {
+      return {
+        // Pass all component listeners directly to input
+        ...this.$listeners,
+        // Override input listener to work with v-model
+        input: (event) => this.$emit("input", event.target.value),
+      };
+    },
+  },
   data() {
     return {
-      newToreadText: "",
-      books: [
-        { 
-          id: nextToreadId++,
-          title: "Harry Potter" 
-        },
-        {
-          id: nextToreadId++,
-          title: "The Giver"
-        }
-      ],
+      // newToreadText: "",
+      books: [],
     };
   },
   methods: {
     addedbook() {
+      // const newToreadText = "";
       const trimmedText = this.newToReadText.trim();
-      const inputfromfield = document.getElementById('inputfield').value;
+      const inputfromfield = document.getElementById("inputfield").value;
       console.log(inputfromfield);
 
       if (trimmedText) {
         this.books.push({
-          title: inputfromfield
+          title: inputfromfield,
         });
         this.newToReadText = "";
       }
