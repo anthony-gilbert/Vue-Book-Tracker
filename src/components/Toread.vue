@@ -64,6 +64,7 @@ export default {
       const trimmedText = this.newToReadText.trim();
       const inputfromfield = document.getElementById("inputfield").value;
       console.log(inputfromfield);
+      console.log('a book has been added');
 
       if (trimmedText) {
         this.books.push({
