@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-  <p>Made by Anthony Gilbert</p>
+  <p class="mt-5 mb-3 text-muted">Made with <img alt="Vue logo" src="../assets/logo.png"/>  by Anthony Gilbert</p>
   </div>
 </template>
 
@@ -17,6 +17,9 @@ export default {
 
 
 <style>
+img {
+  width: 20px;
+}
 h3 {
   margin: 40px 0 0;
 }
