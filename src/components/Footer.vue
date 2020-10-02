@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-  <p class="mt-5 mb-3 text-muted">Made with <img alt="Vue logo" src="../assets/logo.png"/>  by Anthony Gilbert</p>
+  <p class="mt-5 mb-3 text-muted">Made with <img alt="Vue logo" src="../assets/logo.png"/>ue.js  by Anthony Gilbert</p>
   </div>
 </template>
 
