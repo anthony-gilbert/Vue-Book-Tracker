@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h3>To Read</h3>
+    <h3>Books Read</h3>
     <p>Total: {{readingcount}}</p>
     <form id="formbox" @submit="onSubmit">
       <md-field class="formboxes" md-inline>

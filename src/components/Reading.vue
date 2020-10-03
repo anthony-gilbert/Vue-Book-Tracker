@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h3>To Read</h3>
+    <h3>Currently Reading</h3>
     <p>Total: {{readingcount}}</p>
     <form id="formbox" @submit="onSubmit">
       <md-field class="formboxes" md-inline>
@@ -23,7 +23,7 @@
       <md-button
         v-on:click="readingbook"
         class="md-raised green-butn md-mini formboxes"
-      >Add to Read</md-button>
+      >Finished Reading</md-button>
       <md-button v-on:click="deletebook" class="md-raised md-accent md-mini formboxes">Delete</md-button>
     </form>
   </div>

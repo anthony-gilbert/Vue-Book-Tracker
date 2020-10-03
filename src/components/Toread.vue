@@ -1,46 +1,56 @@
 <template>
   <div>
     <h3>To Read</h3>
-    <p>Total: {{readingcount}}</p>
+    <p>Total: {{ readingcount }}</p>
     <form id="formbox" @submit="onSubmit">
       <md-field class="formboxes" md-inline>
         <label class="formboxes">Add a book you want to read</label>
-        <md-input @keydown.enter="addedbook" v-model="newToreadText " ></md-input>
-    
+        <md-input
+          id="inputfield"
+          @keydown.enter="addedbook"
+          v-model="newToreadText"
+        ></md-input>
+
         <md-button
           v-on:click="addedbook"
           class="md-raised md-primary md-mini addbookbutn formboxes"
-        >Add +</md-button>
+          >Add +</md-button
+        >
       </md-field>
-      <md-list>
+      <md-list id="toread-list">
         <md-list-item
           class="listofbooks"
           v-for="book in books"
           v-bind:key="book.id"
           v-bind:title="book.title"
           @click="alert"
-        >{{book.title}}</md-list-item>
+          >{{ book.title }}</md-list-item
+        >
       </md-list>
       <md-button
         v-on:click="readingbook"
         class="md-raised green-butn md-mini formboxes"
-      >Add to Reading</md-button>
-      <md-button v-on:click="deletebook" class="md-raised md-accent md-mini formboxes">Delete</md-button>
+        >Add to Reading</md-button
+      >
+      <md-button
+        v-on:click="deletebook"
+        class="md-raised md-accent md-mini formboxes"
+        >Delete</md-button
+      >
     </form>
   </div>
 </template>
 
 <script lang="ts">
-
-// let newToreadId = 1;
-
+let newToreadId = 1;
 export default {
   name: "Toread",
+  // el: '#toread-list',
   props: {
     value: {
       type: String,
-      default: '',
-    }
+      default: "",
+    },
   },
   computed: {
     listeners() {
@@ -54,17 +64,21 @@ export default {
   },
   data() {
     return {
-      // newToreadText: "",
-      books: [],
+      newToreadText: "",
+      books: [
+        {
+          id: newToreadId++,
+          title: "Harry Potter",
+        },
+      ],
     };
   },
   methods: {
     addedbook() {
-      // const newToreadText = "";
       const trimmedText = this.newToReadText.trim();
       const inputfromfield = document.getElementById("inputfield").value;
       console.log(inputfromfield);
-      console.log('a book has been added');
+      console.log("a book has been added");
 
       if (trimmedText) {
         this.books.push({
