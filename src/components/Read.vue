@@ -3,56 +3,73 @@
     <h3>Books Read</h3>
     <!-- <p>Total: {{readingcount}}</p> -->
     <form id="formbox">
-      <md-field class="formboxes" md-inline>
-        <label class="formboxes">Add a book you have read</label>
-        <md-input id="inputfield" value class="formboxes"></md-input>
+      <!-- <md-field class="formboxes" md-inline> -->
+        <!-- <label class="formboxes">Add a book you have read</label> -->
+        <BaseInputText 
+          v-model="newReadText"
+          placeholder="   Add a book you have read"
+          @keydown.enter="addedbook"
+        />
+
         <md-button
           v-on:click="addedbook"
           class="md-raised md-primary md-mini addbookbutn formboxes"
-        >Add +</md-button>
-      </md-field>
-      <md-list>
-        <md-list-item
-          class="listofbooks"
-          v-for="book in books"
-          v-bind:key="book.id"
-          v-bind:title="book.title"
+          >Add +</md-button
+        >
+      <!-- </md-field> -->
+       <md-list id="toread-list" v-if="readlists.length">
+        <ReadlistItem
+          v-for="readlist in readlists"
+          :key="readlist.id"
+          :readlist="readlist"
           @click="addedbook"
-        >{{book.title}}</md-list-item>
+        />
       </md-list>
-      <md-button v-on:click="deletebook" class="md-raised md-accent md-mini formboxes">Delete</md-button>
+      <p v-else>Nothing left in the list.</p>
     </form>
   </div>
 </template>
 
 <script lang="ts">
-// let nextToreadId = 1;
+import BaseInputText from './BaseInputText.vue';
+import ReadlistItem from './ReadlistItem.vue';
+let nextreadId = 1;
 
 export default {
-  name: "Toread",
-  props: {
-    toreadcount: Number,
-    title: String,
-    value: {
-      type: String,
-      default: "",
-    },
+  name: "Read",
+  components: {
+    BaseInputText,
+    ReadlistItem
   },
   data() {
     return {
       newReadText: "",
-      books: [],
+      readlists: [
+        // {
+        //   id: nextreadId++,
+        //   text: "Harry Potter",
+        // },
+      ],
     };
   },
   methods: {
-    addedbook() {
+    addedbook(e) {
+      e.preventDefault();
       
-      console.log('book added');
-
-      
+      const trimmedText = this.newReadText.trim();
+      if (trimmedText) {
+        this.readlists.push({
+          id: nextreadId++,
+          text: trimmedText,
+        });
+        this.newReadText = "";
+      }
     },
-    deletebook: function () {
-      console.log("deleted book from list");
+    deletebook(idToRemove) {
+          console.log("deleted book from list");
+        this.readlists = this.readlists.filter((readlist) => {
+        return readlist.id !== idToRemove;
+      });
     },
   },
 };
