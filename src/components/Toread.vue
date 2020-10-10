@@ -1,97 +1,90 @@
 <template>
   <div>
     <h3>To Read</h3>
-    <p>Total: {{ readingcount }}</p>
-    <form id="formbox" @submit="onSubmit">
-      <md-field class="formboxes" md-inline>
-        <label class="formboxes">Add a book you want to read</label>
-        <md-input
-          id="inputfield"
-          @keydown.enter="addedbook"
+    <!-- <p>Total: {{ readingcount }}</p> -->
+    <form id="formbox">
+      <!-- <md-field class="formboxes" md-inline> -->
+        <!-- <label class="formboxes"></label> -->
+
+        <BaseInputText
           v-model="newToreadText"
-        ></md-input>
+          placeholder="   Add a book you want to read"
+          @keydown.enter="addedbook"
+        />
 
         <md-button
-          v-on:click="addedbook"
+          
           class="md-raised md-primary md-mini addbookbutn formboxes"
           >Add +</md-button
         >
-      </md-field>
-      <md-list id="toread-list">
-        <md-list-item
-          class="listofbooks"
-          v-for="book in books"
-          v-bind:key="book.id"
-          v-bind:title="book.title"
-          @click="alert"
-          >{{ book.title }}</md-list-item
-        >
+      <!-- </md-field> -->
+      <md-list id="toread-list" v-if="toreads.length">
+        <ToreadListItem
+          v-for="toread in toreads"
+          :key="toread.id"
+          :toread="toread"
+          @remove="deletebook"
+        />
       </md-list>
+        <p v-else>Nothing left in the list.</p>
+
       <md-button
         v-on:click="readingbook"
         class="md-raised green-butn md-mini formboxes"
         >Add to Reading</md-button
       >
-      <md-button
+      <!-- <md-button
         v-on:click="deletebook"
         class="md-raised md-accent md-mini formboxes"
         >Delete</md-button
-      >
+      > -->
     </form>
   </div>
 </template>
 
 <script lang="ts">
-let newToreadId = 1;
+import BaseInputText from "./BaseInputText.vue";
+import ToreadListItem from "./ToreadListItem.vue";
+let nexttoreadId = 1;
+
 export default {
   name: "Toread",
-  // el: '#toread-list',
-  props: {
-    value: {
-      type: String,
-      default: "",
-    },
-  },
-  computed: {
-    listeners() {
-      return {
-        // Pass all component listeners directly to input
-        ...this.$listeners,
-        // Override input listener to work with v-model
-        input: (event) => this.$emit("input", event.target.value),
-      };
-    },
+  components: {
+    BaseInputText,
+    ToreadListItem,
   },
   data() {
     return {
       newToreadText: "",
-      books: [
-        {
-          id: newToreadId++,
-          title: "Harry Potter",
-        },
+      toreads: [
+        // {
+        //   // id: nexttoreadId++,
+        //   // text: "Harry Potter",
+        // },
       ],
     };
   },
   methods: {
-    addedbook() {
-      const trimmedText = this.newToReadText.trim();
-      const inputfromfield = document.getElementById("inputfield").value;
-      console.log(inputfromfield);
-      console.log("a book has been added");
-
+    addedbook(e) {
+      e.preventDefault();
+      
+      const trimmedText = this.newToreadText.trim();
       if (trimmedText) {
-        this.books.push({
-          title: inputfromfield,
+        this.toreads.push({
+          id: nexttoreadId++,
+          text: trimmedText,
         });
-        this.newToReadText = "";
+        this.newToreadText = "";
       }
     },
     readingbook: function () {
       console.log("added book to reading list");
     },
-    deletebook: function () {
+    deletebook(idToRemove) {
       console.log("deleted book from list");
+        this.toreads = this.toreads.filter((toread) => {
+        return toread.id !== idToRemove;
+      });
     },
   },
 };

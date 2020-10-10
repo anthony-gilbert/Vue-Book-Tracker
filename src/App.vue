@@ -7,26 +7,14 @@
     />
      <!-- <md-app md-waterfall md-mode="fixed"> -->
       <Header msg="Book Tracker" />
-      <Toread v-bind:toreadcount="2" v-bind:toreadlist="toreads" />
-      <Reading v-bind:readingcount="5" v-bind:readinglist="readings" />
-      <Read v-bind:readcount="5" v-bind:readlist="reads" />
+      <Toread v-bind:toreadcount="2" />
+      <Reading v-bind:readingcount="5" />
+      <Read v-bind:readcount="5" />
     <!-- </md-app> -->
     <Footer />
     
   </div>
 </template>
-
-<!--
-    <md-menu md-direction="bottom-start">
-      <md-button md-menu-trigger>Bottom Start</md-button>
-
-      <md-menu-content>
-        <md-menu-item>My Item 1</md-menu-item>
-        <md-menu-item>My Item 2</md-menu-item>
-        <md-menu-item>My Item 3</md-menu-item>
-      </md-menu-content>
-    </md-menu>
- -->
 
 <script>
 // import Vue from 'vue'
@@ -40,17 +28,11 @@ export default {
   name: "App",
   components: {
     Header,
-
     Toread,
     Reading,
     Read,
     Footer,
-  },
-  data() {
-    return {
-      toreads: [],
-    };
-  },
+  }
 };
 </script>
 

@@ -1,11 +1,11 @@
 <template>
   <div>
     <h3>Books Read</h3>
-    <p>Total: {{readingcount}}</p>
-    <form id="formbox" @submit="onSubmit">
+    <!-- <p>Total: {{readingcount}}</p> -->
+    <form id="formbox">
       <md-field class="formboxes" md-inline>
         <label class="formboxes">Add a book you have read</label>
-        <md-input id="inputfield" value class="formboxes" v-model="inline"></md-input>
+        <md-input id="inputfield" value class="formboxes"></md-input>
         <md-button
           v-on:click="addedbook"
           class="md-raised md-primary md-mini addbookbutn formboxes"
