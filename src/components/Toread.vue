@@ -13,7 +13,7 @@
         />
 
         <md-button
-          
+          @click="addedbook"
           class="md-raised md-primary md-mini addbookbutn formboxes"
           >Add +</md-button
         >
@@ -29,7 +29,7 @@
         <p v-else>Nothing left in the list.</p>
 
       <md-button
-        v-on:click="readingbook"
+        @click="readingbook"
         class="md-raised green-butn md-mini formboxes"
         >Add to Reading</md-button
       >
