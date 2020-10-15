@@ -1,7 +1,7 @@
 <template>
   <md-list-item>
     {{ readlist.text }}
-    <button id="deletebutton" @click="$emit('remove', readlist.id)">
+    <button id="deletebutton" @click="$emit('removeread', readlist.id)">
       Delete
     </button>
   </md-list-item>

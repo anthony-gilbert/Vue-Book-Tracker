@@ -22,7 +22,7 @@
           v-for="readlist in readlists"
           :key="readlist.id"
           :readlist="readlist"
-          @click="addedbook"
+          @removeread="deletebook"
         />
       </md-list>
       <p v-else>Nothing left in the list.</p>
