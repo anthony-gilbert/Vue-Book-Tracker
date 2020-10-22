@@ -31,7 +31,7 @@
       <md-button
         @click="readingbook"
         class="md-raised green-butn md-mini formboxes"
-        >Add to Reading</md-button
+        >Reading</md-button
       >
       <!-- <md-button
         v-on:click="deletebook"

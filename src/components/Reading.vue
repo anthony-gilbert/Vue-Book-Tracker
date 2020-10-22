@@ -3,69 +3,82 @@
     <h3>Currently Reading</h3>
     <!-- <p>Total: {{readingcount}}</p> -->
     <form id="formbox">
-      <md-field class="formboxes" md-inline>
-        <label class="formboxes">Add a book you are reading</label>
-        <md-input id="inputfield" value class="formboxes"></md-input>
+      <!-- <md-field class="formboxes" md-inline> -->
+        <!-- <label class="formboxes">Add a book you are reading</label> -->
+        <BaseInputText 
+          v-model="newReadingText"
+          placeholder="   Add a book you are reading"
+          @keydown.enter="addedbook"
+        />
+
         <md-button
           v-on:click="addedbook"
           class="md-raised md-primary md-mini addbookbutn formboxes"
-        >Add +</md-button>
-      </md-field>
-      <md-list>
-        <md-list-item
-          class="listofbooks"
-          v-for="book in books"
-          v-bind:key="book.id"
-          v-bind:title="book.title"
-          @click="addedbook"
-        >{{book.title}}</md-list-item>
+          >Add +</md-button
+        >
+      <!-- </md-field> -->
+      <md-list id="reading-list" v-if="readingitems.length">
+        <ReadingListItem
+          v-for="readingitem in readingitems"
+          :key="readingitem.id"
+          :readingitem="readingitem"
+          @removereading="deletebook"
+        />
       </md-list>
+      <p v-else>Nothing left in the list.</p>
+
       <md-button
-        
+        @click="readingbook"
         class="md-raised green-butn md-mini formboxes"
-      >Finished Reading</md-button>
-      <md-button v-on:click="deletebook" class="md-raised md-accent md-mini formboxes">Delete</md-button>
+        >Finished Reading</md-button
+      >
     </form>
   </div>
 </template>
 
 <script lang="ts">
-// let nextToreadId = 1;
+import BaseInputText from './BaseInputText.vue';
+import ReadingListItem from './ReadingListItem.vue';
+let nextReadingId = 1;
 
 export default {
-  name: "Toread",
-  props: {
-    toreadcount: Number,
-    title: String,
-    value: {
-      type: String,
-      default: "",
-    },
+  name: "Reading",
+  components: {
+    BaseInputText,
+    ReadingListItem
   },
   data() {
     return {
       newReadingText: "",
-      books: [],
+      readingitems: [
+        // {
+        //   id: nextreadId++,
+        //   text: "Harry Potter",
+        // },
+      ],
     };
   },
   methods: {
-    addedbook() {
-      // const trimmedText = this.newToreadText.trim();
-      // const inputfromfield = document.getElementById("inputfield").value;
-      // console.log(inputfromfield);
-      console.log('book added');
-
-      // this.books.push({
-      //   id: nextToreadId++,
-      //   title: inputfromfield,
-      // });
-      // this.newReadingText = "";
+    addedbook(e) {
+      e.preventDefault();
+      
+      const trimmedText = this.newReadingText.trim();
+      if (trimmedText) {
+        this.readingitems.push({
+          id: nextReadingId++,
+          text: trimmedText,
+        });
+        this.newReadingText = "";
+      }
     },
-    readingbook: function () {
+    readingbook() {
       console.log("added book to reading list");
     },
-    deletebook: function () {
-      console.log("deleted book from list");
+    deletebook(idToRemove) {
+        console.log("deleted book from list");
+        this.readingitems = this.readingitems.filter((readingitem) => {
+        return readingitem.id !== idToRemove;
+      });
     },
   },
 };
