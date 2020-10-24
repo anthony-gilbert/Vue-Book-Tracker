@@ -1,7 +1,15 @@
 <template>
-  <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>Keep track of the books you read.</p>
+  <div class="md-layout md-gutter mdc-top-app-bar header-class md-elevation-1">
+       <md-avatar id="avataricon">
+    <img
+      class="md-layout-item"
+      id="book-icon"
+      alt="Book Icon."
+      src="https://www.graphicsfuel.com/wp-content/uploads/2012/07/books-icon-512.png"
+    />
+       </md-avatar>
+    <h1 class="md-layout-item" >{{ msg }}</h1>
+    
   </div>
 </template>
 
@@ -15,7 +23,11 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style>
+h1{
+  color: aliceblue;
+  margin-left: -50px;
+}
 h3 {
   margin: 40px 0 0;
 }
@@ -28,6 +40,18 @@ li {
   margin: 0 10px;
 }
 a {
-  color: #42b983;
+  color: #147449;
+}
+.header-class {
+  background-color: teal;
+}
+#book-icon {
+  width: 50px;
+  height: 50px;
+  padding-left: 5%;
+  margin-left: 0%;
+}
+#avataricon{
+  margin-left: 50px;
 }
 </style>

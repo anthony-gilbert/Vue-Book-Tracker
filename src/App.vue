@@ -1,10 +1,5 @@
 <template>
   <div id="app">
-    <img
-      id="book-icon"
-      alt="Book Icon."
-      src="https://www.graphicsfuel.com/wp-content/uploads/2012/07/books-icon-512.png"
-    />
      <!-- <md-app md-waterfall md-mode="fixed"> -->
       <Header msg="Book Tracker" />
       <Toread v-bind:toreadcount="2" />
@@ -48,11 +43,5 @@ body {
   color: #2c3e50;
   background-color: cadetblue;
 }
-#book-icon {
-  width: 50px;
-  height: 50px;
-  padding-left: 0%;
-  margin-left: 0%;
 
-}
 </style>
