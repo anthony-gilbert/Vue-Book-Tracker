@@ -26,7 +26,10 @@ COPY --from=build-stage /app/dist /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/nginx.conf
 
 # Expose port 80
-EXPOSE 8070
+EXPOSE 5001
 
 # Start nginx
 CMD ["nginx", "-g", "daemon off;"]
+
+# docker build -t vue-book-tracker-frontend:v1 .
+# docker push anthonygilbertt/vue-book-tracker-frontend:v1
