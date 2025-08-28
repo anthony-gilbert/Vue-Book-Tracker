@@ -28,7 +28,7 @@ A modern book tracking application built with Vue.js frontend and Go backend, fe
    cd backend
    go mod tidy
    go run cmd/server/main.go
-   # Runs on http://localhost:8080
+   # Runs on http://localhost:8083
    ```
 
 ### Docker
@@ -46,7 +46,7 @@ docker-compose up --build
 # Apply all configurations
 kubectl apply -f kube-configs/
 
-# Access via ingress at http://book-tracker.local
+# Access via ingress at http://booktracker.dev
 ```
 
 ## Architecture

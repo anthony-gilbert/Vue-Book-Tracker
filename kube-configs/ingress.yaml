@@ -2,26 +2,26 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: book-tracker-ingress
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
-    nginx.ingress.kubernetes.io/use-regex: "true"
-    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
-    nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, PUT, DELETE, OPTIONS"
-    nginx.ingress.kubernetes.io/cors-allow-headers: "Origin, Content-Type, Accept, Authorization"
+  # annotations:
+  #   nginx.ingress.kubernetes.io/rewrite-target: /
+  #   nginx.ingress.kubernetes.io/use-regex: "true"
+  #   nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+  #   nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, PUT, DELETE, OPTIONS"
+  #   nginx.ingress.kubernetes.io/cors-allow-headers: "Origin, Content-Type, Accept, Authorization"
 spec:
   ingressClassName: nginx
   rules:
-  - host: book-tracker.local
+  - host: localhost
     http:
       paths:
-      - path: /api/(.*)
+      - path: /api/
         pathType: Prefix
         backend:
           service:
             name: book-tracker-backend-service
             port:
               number: 8080
-      - path: /(.*)
+      - path: /
         pathType: Prefix
         backend:
           service:
@@ -30,5 +30,5 @@ spec:
               number: 80
   tls:
   - hosts:
-    - book-tracker.local
+    - localhost
     secretName: book-tracker-tls

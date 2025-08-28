@@ -17,6 +17,7 @@ spec:
       containers:
       - name: frontend
         image: anthonygilbertt/vue-book-tracker-frontend:v1
+        imagePullPolicy: Always
         ports:
         - containerPort: 5001
         resources:
@@ -49,9 +50,9 @@ spec:
         image: anthonygilbertt/vue-book-tracker-backend:v1
         ports:
         - containerPort: 8083
-        # env:
-        # - name: PORT
-        #   value: "8080"
+        env:
+        - name: PORT
+          value: "8083"
         resources:
           requests:
             memory: "64Mi"
