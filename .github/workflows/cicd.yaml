@@ -1,0 +1,87 @@
+name: cicd
+
+on:
+  push:
+    paths:
+      - src/**
+      - backend/**
+      - Dockerfile
+      - backend/Dockerfile
+      - public/**
+      - server/**
+    branches:
+      - master
+
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set short git commit SHA
+        shell: bash
+        run: |
+          echo "COMMIT_SHA=${GITHUB_SHA:0:6}" >> $GITHUB_ENV
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push frontend
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: anthonygilbertt/vue-book-tracker-frontend:${{env.COMMIT_SHA}}
+
+      - name: Build and push backend
+        uses: docker/build-push-action@v6
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile
+          push: true
+          tags: anthonygilbertt/vue-book-tracker-backend:${{env.COMMIT_SHA}}
+    outputs:
+      commit_id: ${{env.COMMIT_SHA}}
+  cd:
+    runs-on: self-hosted
+    needs: ci
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Modify values.yaml
+        shell: bash
+        run: |
+          echo ${{needs.ci.outputs.commit_id}}
+          pip install yq
+          yq -Yi '.frontend.image.tag = "${{needs.ci.outputs.commit_id}}"' helm-charts/book-tracker/values.yaml
+          yq -Yi '.backend.image.tag = "${{needs.ci.outputs.commit_id}}"' helm-charts/book-tracker/values.yaml
+
+
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v9
+        with:
+          message: 'Updates values.yaml with commit ${{needs.ci.outputs.commit_id}}'
+
+      - name: Install ArgoCD CLI
+        shell: bash
+        run: |
+          curl -ksSL -o argocd https://argo-argocd-server.argocd/download/argocd-linux-amd64
+          chmod +x argocd
+          sudo mv ./argocd /usr/local/bin/argocd
+          echo "ArgoCD CLI installed successfully."
+        
+        
+      - name: ArgoCD sync
+        shell: bash
+        run: | 
+          argocd login argo-argocd-server.argocd --insecure --username admin --password ${{ secrets.ARGOCD_PASSWORD }}
+          argocd app sync book-tracker
+          echo "ArgoCD login completed successfully."
