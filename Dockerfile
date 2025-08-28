@@ -11,7 +11,7 @@ COPY package*.json ./
 RUN npm ci --only=production
 
 # Copy source code
-COPY . .
+COPY . /app
 
 # Build the application
 RUN npm run build
@@ -26,7 +26,7 @@ COPY --from=build-stage /app/dist /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/nginx.conf
 
 # Expose port 80
-EXPOSE 80
+EXPOSE 8070
 
 # Start nginx
 CMD ["nginx", "-g", "daemon off;"]
