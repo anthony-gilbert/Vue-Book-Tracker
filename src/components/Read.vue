@@ -138,7 +138,7 @@ export default {
   align-items: center;
   margin-bottom: 30px;
   padding-bottom: 15px;
-  border-bottom: 2px solid #e0e0e0;
+  border-bottom: 2px solid #e68888;
 }
 
 .section-icon {
