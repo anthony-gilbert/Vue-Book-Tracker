@@ -32,6 +32,5 @@ EXPOSE 5001
 
 # Start nginx
 CMD ["./nginx-setup.sh"]
-
 # docker build -t vue-book-tracker-frontend:v1 .
 # docker push anthonygilbertt/vue-book-tracker-frontend:v1
