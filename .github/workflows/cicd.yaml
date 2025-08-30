@@ -82,5 +82,11 @@ jobs:
         shell: bash
         run: | 
           argocd login argocd.booktracker.dev --insecure --username admin --password ${{ secrets.ARGOCD_PASSWORD }} --grpc-web
+          argocd app create book-tracker \
+            --repo https://github.com/anthonygilbertt/Vue-Book-Tracker.git \
+            --path helm-charts/book-tracker \
+            --dest-server https://kubernetes.default.svc \
+            --dest-namespace default \
+            --grpc-web || true
           argocd app sync book-tracker --grpc-web
-          echo "ArgoCD login completed successfully."
+          echo "ArgoCD sync completed successfully."
