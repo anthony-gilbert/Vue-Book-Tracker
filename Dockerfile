@@ -23,7 +23,9 @@ FROM nginx:alpine as production-stage
 COPY --from=build-stage /app/dist /usr/share/nginx/html
 
 # Copy custom nginx configuration
-COPY nginx.conf /etc/nginx/nginx.conf
+COPY /nginx-config/booktracker.dev /etc/nginx/sites-available/booktracker.dev
+RUN ln -sf /etc/nginx/sites-available/booktracker.dev /etc/nginx/sites-enabled/
+RUN systemctl reload nginx
 
 # Expose port 80
 EXPOSE 5001
