@@ -22,7 +22,7 @@ FROM nginx:alpine AS production-stage
 # Copy built application from build stage
 COPY --from=build-stage /app/dist /usr/share/nginx/html
 
-# Copy custom nginx configuration
+# Copy custom nginx configuration  
 COPY /nginx-config/booktracker.dev /etc/nginx/sites-available/booktracker.dev
 COPY nginx-setup.sh /app
 # RUN chmod +x /app/nginx-setup.sh
@@ -31,7 +31,7 @@ COPY nginx-setup.sh /app
 EXPOSE 5001
 
 # Start nginx
-CMD ["/app/nginx-setup.sh"]
+CMD ["./nginx-setup.sh"]
 
 # docker build -t vue-book-tracker-frontend:v1 .
 # docker push anthonygilbertt/vue-book-tracker-frontend:v1
