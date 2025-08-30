@@ -81,6 +81,6 @@ jobs:
       - name: ArgoCD sync
         shell: bash
         run: | 
-          argocd login argocd.booktracker.dev --insecure --username admin --password ${{ secrets.ARGOCD_PASSWORD }}
-          argocd app sync book-tracker
+          argocd login argocd.booktracker.dev --insecure --username admin --password ${{ secrets.ARGOCD_PASSWORD }} --grpc-web
+          argocd app sync book-tracker --grpc-web
           echo "ArgoCD login completed successfully."
