@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: github-runner
+  namespace: github-runners
+  labels:
+    app: github-runner
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: github-runner
+  template:
+    metadata:
+      labels:
+        app: github-runner
+    spec:
+      containers:
+      - name: runner
+        image: summerwind/actions-runner:latest
+        env:
+        - name: RUNNER_NAME
+          value: "k8s-self-hosted-runner"
+        - name: RUNNER_REPO
+          value: "anthony-gilbert/Vue-Book-Tracker"
+        - name: RUNNER_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: github-runner-token
+              key: token
+        - name: RUNNER_WORKDIR
+          value: "/runner"
+        - name: DISABLE_RUNNER_UPDATE
+          value: "true"
+        - name: RUNNER_LABELS
+          value: "kubernetes,self-hosted,vue-book-tracker"
+        volumeMounts:
+        - name: runner-workdir
+          mountPath: /runner
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+      volumes:
+      - name: runner-workdir
+        emptyDir: {}
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: github-runner-service
+  namespace: github-runners
+  labels:
+    app: github-runner
+spec:
+  selector:
+    app: github-runner
+  ports:
+  - port: 80
+    targetPort: 8080
+    name: http
+  type: ClusterIP

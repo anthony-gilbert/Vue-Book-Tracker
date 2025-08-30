@@ -1,0 +1,94 @@
+# Example GitHub Actions workflow using the self-hosted runner
+# Place this file in .github/workflows/ directory of your repository
+
+name: Build and Test on Self-Hosted Runner
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-frontend:
+    runs-on: self-hosted  # This will use your Kubernetes runner
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Run linting
+      run: npm run lint
+    
+    - name: Run tests
+      run: npm test
+    
+    - name: Build application
+      run: npm run build
+    
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-files
+        path: dist/
+
+  build-backend:
+    runs-on: [self-hosted, kubernetes]  # Using specific labels
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js for backend
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+    
+    - name: Install backend dependencies
+      working-directory: ./backend
+      run: npm ci
+    
+    - name: Run backend tests
+      working-directory: ./backend
+      run: npm test
+    
+    - name: Build backend
+      working-directory: ./backend
+      run: npm run build
+
+  deploy:
+    runs-on: self-hosted
+    needs: [build-frontend, build-backend]
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: build-files
+        path: dist/
+    
+    - name: Deploy to Kubernetes
+      run: |
+        echo "Deploying to Kubernetes cluster..."
+        # Add your deployment commands here
+        # kubectl apply -f kube-configs/
+        echo "Deployment completed!"
+    
+    - name: Notify deployment status
+      run: |
+        echo "✅ Application deployed successfully to Kubernetes!"
+        echo "Runner: ${{ runner.name }}"
+        echo "OS: ${{ runner.os }}"
