@@ -25,7 +25,7 @@ COPY --from=build-stage /app/dist /usr/share/nginx/html
 # Copy custom nginx configuration
 COPY /nginx-config/booktracker.dev /etc/nginx/sites-available/booktracker.dev
 COPY nginx-setup.sh /app
-RUN chmod +x /app/nginx-setup.sh
+# RUN chmod +x /app/nginx-setup.sh
 
 # Expose port 80
 EXPOSE 5001
