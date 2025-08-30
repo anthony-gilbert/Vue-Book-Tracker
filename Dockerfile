@@ -1,5 +1,5 @@
 # Frontend Dockerfile
-FROM node:16-alpine as build-stage
+FROM node:16-alpine AS build-stage
 
 # Set working directory
 WORKDIR /app
@@ -17,7 +17,7 @@ COPY . /app
 RUN npm run build
 
 # Production stage
-FROM nginx:alpine as production-stage
+FROM nginx:alpine AS production-stage
 
 # Copy built application from build stage
 COPY --from=build-stage /app/dist /usr/share/nginx/html
@@ -25,14 +25,13 @@ COPY --from=build-stage /app/dist /usr/share/nginx/html
 # Copy custom nginx configuration
 COPY /nginx-config/booktracker.dev /etc/nginx/sites-available/booktracker.dev
 COPY nginx-setup.sh /app
-
-RUN systemctl reload nginx
+RUN chmod +x /app/nginx-setup.sh
 
 # Expose port 80
 EXPOSE 5001
 
 # Start nginx
-CMD ["./app/nginx-setup.sh"]
+CMD ["/app/nginx-setup.sh"]
 
 # docker build -t vue-book-tracker-frontend:v1 .
 # docker push anthonygilbertt/vue-book-tracker-frontend:v1
