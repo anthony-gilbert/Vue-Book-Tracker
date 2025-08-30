@@ -22,7 +22,7 @@ applicationSet:
   replicas: 1
 
 global:
-  domain: argocd.local
+  domain: argocd.booktracker.dev
 
 certificate:
   enabled: true
