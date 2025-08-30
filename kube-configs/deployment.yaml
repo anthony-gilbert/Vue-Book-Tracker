@@ -1,6 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: book-tracker
   name: book-tracker-frontend
   labels:
     app: book-tracker-frontend
@@ -32,6 +33,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: book-tracker
   name: book-tracker-backend
   labels:
     app: book-tracker-backend
@@ -60,15 +62,15 @@ spec:
           limits:
             memory: "128Mi"
             cpu: "100m"
-        # livenessProbe:
-        #   httpGet:
-        #     path: /health
-        #     port: 8080
-        #   initialDelaySeconds: 30
-        #   periodSeconds: 10
-        # readinessProbe:
-        #   httpGet:
-        #     path: /health
-        #     port: 8080
-        #   initialDelaySeconds: 5
-        #   periodSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8083
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8083
+          initialDelaySeconds: 5
+          periodSeconds: 5
