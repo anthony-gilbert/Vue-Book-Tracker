@@ -11,6 +11,8 @@ server:
       traefik.ingress.kubernetes.io/router.tls: "true"
       traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
       traefik.ingress.kubernetes.io/router.tls.passthrough: "true"
+      # traefik.ingress.kubernetes.io/router.middlewares: "redirect-to-https@kubernetescrd"
+      traefik.ingress.kubernetes.io/backend-protocol: "HTTPS"
     enabled: true
     ingressClassName: traefik
     tls: true
