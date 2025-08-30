@@ -24,14 +24,15 @@ COPY --from=build-stage /app/dist /usr/share/nginx/html
 
 # Copy custom nginx configuration
 COPY /nginx-config/booktracker.dev /etc/nginx/sites-available/booktracker.dev
-RUN ln -sf /etc/nginx/sites-available/booktracker.dev /etc/nginx/sites-enabled/
+COPY nginx-setup.sh /app
+
 RUN systemctl reload nginx
 
 # Expose port 80
 EXPOSE 5001
 
 # Start nginx
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["./app/nginx-setup.sh"]
 
 # docker build -t vue-book-tracker-frontend:v1 .
 # docker push anthonygilbertt/vue-book-tracker-frontend:v1
