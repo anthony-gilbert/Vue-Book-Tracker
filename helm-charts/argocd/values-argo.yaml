@@ -8,14 +8,15 @@ server:
   replicas: 1
   ingress:
     annotations:
-      traefik.ingress.kubernetes.io/router.tls: "true"
-      traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
-      traefik.ingress.kubernetes.io/router.tls.passthrough: "true"
-      # traefik.ingress.kubernetes.io/router.middlewares: "redirect-to-https@kubernetescrd"
       traefik.ingress.kubernetes.io/backend-protocol: "HTTPS"
     enabled: true
     ingressClassName: traefik
-    tls: true
+    hosts:
+      - argocd.booktracker.dev
+    tls:
+      - hosts:
+        - argocd.booktracker.dev
+        secretName: argocd-server-tls
 
 repoServer:
   replicas: 1
@@ -25,6 +26,14 @@ applicationSet:
 
 global:
   domain: argocd.booktracker.dev
+
+configs:
+  params:
+    # Run in insecure mode behind nginx SSL termination
+    server.insecure: true
+  cm:
+    # Set the external URL
+    url: "https://argocd.booktracker.dev"
 
 certificate:
   enabled: true
