@@ -1,11 +1,18 @@
 redis-ha:
   enabled: false
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 2
 
 controller:
   replicas: 1
-
+  
 server:
   replicas: 1
+  autoscaling:
+    enabled: false
+    maxReplicas: 2
   ingress:
     annotations:
       traefik.ingress.kubernetes.io/backend-protocol: "HTTPS"
@@ -20,9 +27,15 @@ server:
 
 repoServer:
   replicas: 1
+  autoscaling:
+    enabled: false
+    maxReplicas: 2
 
 applicationSet:
   replicas: 1
+  autoscaling:
+    enabled: false
+    maxReplicas: 2
 
 global:
   domain: argocd.booktracker.dev
