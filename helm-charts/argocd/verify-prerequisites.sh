@@ -30,8 +30,19 @@ fi
 # Check Kubernetes cluster connectivity (skip in CI/CD environments)
 echo "🔗 Checking Kubernetes cluster connectivity..."
 
-# Detect CI/CD environment (GitHub Actions, GitLab CI, etc.)
-if [ "$GITHUB_ACTIONS" = "true" ] || [ "$CI" = "true" ] || [ -n "$RUNNER_OS" ] || [ -n "$GITHUB_WORKFLOW" ]; then
+# DEBUG: Show ALL environment variables that might indicate CI/CD
+echo "🐛 DEBUG Environment variables:"
+echo "   GITHUB_ACTIONS='$GITHUB_ACTIONS'"
+echo "   CI='$CI'"
+echo "   RUNNER_OS='$RUNNER_OS'"
+echo "   GITHUB_WORKFLOW='$GITHUB_WORKFLOW'"
+echo "   RUNNER_NAME='$RUNNER_NAME'"
+echo "   GITHUB_REPOSITORY='$GITHUB_REPOSITORY'"
+echo "   USER='$USER'"
+echo "   PWD='$PWD'"
+
+# Enhanced CI/CD environment detection with multiple fallbacks
+if [ "$GITHUB_ACTIONS" = "true" ] || [ "$CI" = "true" ] || [ -n "$RUNNER_OS" ] || [ -n "$GITHUB_WORKFLOW" ] || [ -n "$RUNNER_NAME" ] || [ -n "$GITHUB_REPOSITORY" ] || [ "$USER" = "runner" ] || [[ "$PWD" == *"runner"* ]]; then
     echo "🤖 CI/CD environment detected - skipping cluster connectivity check"
     echo "✅ kubectl is ready for deployment"
 else
@@ -48,7 +59,7 @@ else
 fi
 
 # Check if ArgoCD namespace exists (skip in CI/CD environments)
-if [ "$GITHUB_ACTIONS" != "true" ] && [ "$CI" != "true" ] && [ -z "$RUNNER_OS" ] && [ -z "$GITHUB_WORKFLOW" ]; then
+if [ "$GITHUB_ACTIONS" != "true" ] && [ "$CI" != "true" ] && [ -z "$RUNNER_OS" ] && [ -z "$GITHUB_WORKFLOW" ] && [ -z "$RUNNER_NAME" ] && [ -z "$GITHUB_REPOSITORY" ] && [ "$USER" != "runner" ] && [[ "$PWD" != *"runner"* ]]; then
     echo "🏷️  Checking ArgoCD namespace..."
     if ! kubectl get namespace argocd &> /dev/null; then
         echo "❌ ArgoCD namespace not found"
@@ -73,7 +84,7 @@ else
 fi
 
 # Check nginx (skip in CI/CD environments)
-if [ "$GITHUB_ACTIONS" != "true" ] && [ "$CI" != "true" ] && [ -z "$RUNNER_OS" ] && [ -z "$GITHUB_WORKFLOW" ]; then
+if [ "$GITHUB_ACTIONS" != "true" ] && [ "$CI" != "true" ] && [ -z "$RUNNER_OS" ] && [ -z "$GITHUB_WORKFLOW" ] && [ -z "$RUNNER_NAME" ] && [ -z "$GITHUB_REPOSITORY" ] && [ "$USER" != "runner" ] && [[ "$PWD" != *"runner"* ]]; then
     echo "🌍 Checking nginx..."
     if ! command -v nginx &> /dev/null; then
         echo "❌ nginx not found"
@@ -111,7 +122,7 @@ fi
 
 echo ""
 echo "✅ All prerequisites verified successfully!"
-if [ "$GITHUB_ACTIONS" = "true" ] || [ "$CI" = "true" ] || [ -n "$RUNNER_OS" ] || [ -n "$GITHUB_WORKFLOW" ]; then
+if [ "$GITHUB_ACTIONS" = "true" ] || [ "$CI" = "true" ] || [ -n "$RUNNER_OS" ] || [ -n "$GITHUB_WORKFLOW" ] || [ -n "$RUNNER_NAME" ] || [ -n "$GITHUB_REPOSITORY" ] || [ "$USER" = "runner" ] || [[ "$PWD" == *"runner"* ]]; then
     echo "🤖 CI/CD environment is ready for deployment scripts"
 else
     echo "🚀 System is ready for ArgoCD deployment operations"
