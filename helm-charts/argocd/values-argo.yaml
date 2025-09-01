@@ -7,12 +7,26 @@ redis-ha:
 
 controller:
   replicas: 1
-  
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 250m
+      memory: 256Mi
+
 server:
   replicas: 1
   autoscaling:
     enabled: false
     maxReplicas: 2
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 50m
+      memory: 64Mi
   ingress:
     annotations:
       traefik.ingress.kubernetes.io/backend-protocol: "HTTPS"
@@ -30,12 +44,53 @@ repoServer:
   autoscaling:
     enabled: false
     maxReplicas: 2
+  resources:
+    limits:
+      cpu: 100m
+      memory: 256Mi
+    requests:
+      cpu: 50m
+      memory: 128Mi
 
 applicationSet:
   replicas: 1
   autoscaling:
     enabled: false
     maxReplicas: 2
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 50m
+      memory: 64Mi
+
+redis:
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+notifications:
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 50m
+      memory: 64Mi
+
+dex:
+  resources:
+    limits:
+      cpu: 50m
+      memory: 64Mi
+    requests:
+      cpu: 25m
+      memory: 32Mi
 
 global:
   domain: argocd.booktracker.dev
