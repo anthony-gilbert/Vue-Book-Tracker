@@ -3,7 +3,7 @@ frontend:
   image:
     repository: anthonygilbertt/vue-book-tracker-frontend
     pullPolicy: Always
-    tag: f4f558
+    tag: 40689e
   service:
     type: ClusterIP
     port: 80
@@ -19,7 +19,7 @@ backend:
   image:
     repository: anthonygilbertt/vue-book-tracker-backend
     pullPolicy: Always
-    tag: f4f558
+    tag: 40689e
   service:
     type: ClusterIP
     port: 8080
