@@ -27,15 +27,12 @@ server:
     requests:
       cpu: 200m
       memory: 256Mi
+  service:
+    type: NodePort
+    nodePortHttp: 30081
+    nodePortHttps: 30082
   ingress:
-    enabled: true
-    ingressClassName: traefik
-    hosts:
-      - argocd.booktracker.dev
-    tls:
-      - hosts:
-        - argocd.booktracker.dev
-        secretName: argocd-server-tls
+    enabled: false
 
 repoServer:
   replicas: 1
