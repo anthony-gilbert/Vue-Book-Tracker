@@ -30,8 +30,8 @@ fi
 # Check Kubernetes cluster connectivity (skip in CI/CD environments)
 echo "🔗 Checking Kubernetes cluster connectivity..."
 
-# Detect CI/CD environment
-if [ -n "$GITHUB_ACTIONS" ] || [ -n "$CI" ]; then
+# Detect CI/CD environment (GitHub Actions, GitLab CI, etc.)
+if [ "$GITHUB_ACTIONS" = "true" ] || [ "$CI" = "true" ] || [ -n "$RUNNER_OS" ] || [ -n "$GITHUB_WORKFLOW" ]; then
     echo "🤖 CI/CD environment detected - skipping cluster connectivity check"
     echo "✅ kubectl is ready for deployment"
 else
@@ -48,7 +48,7 @@ else
 fi
 
 # Check if ArgoCD namespace exists (skip in CI/CD environments)
-if [ -z "$GITHUB_ACTIONS" ] && [ -z "$CI" ]; then
+if [ "$GITHUB_ACTIONS" != "true" ] && [ "$CI" != "true" ] && [ -z "$RUNNER_OS" ] && [ -z "$GITHUB_WORKFLOW" ]; then
     echo "🏷️  Checking ArgoCD namespace..."
     if ! kubectl get namespace argocd &> /dev/null; then
         echo "❌ ArgoCD namespace not found"
@@ -73,7 +73,7 @@ else
 fi
 
 # Check nginx (skip in CI/CD environments)
-if [ -z "$GITHUB_ACTIONS" ] && [ -z "$CI" ]; then
+if [ "$GITHUB_ACTIONS" != "true" ] && [ "$CI" != "true" ] && [ -z "$RUNNER_OS" ] && [ -z "$GITHUB_WORKFLOW" ]; then
     echo "🌍 Checking nginx..."
     if ! command -v nginx &> /dev/null; then
         echo "❌ nginx not found"
@@ -111,7 +111,7 @@ fi
 
 echo ""
 echo "✅ All prerequisites verified successfully!"
-if [ -n "$GITHUB_ACTIONS" ] || [ -n "$CI" ]; then
+if [ "$GITHUB_ACTIONS" = "true" ] || [ "$CI" = "true" ] || [ -n "$RUNNER_OS" ] || [ -n "$GITHUB_WORKFLOW" ]; then
     echo "🤖 CI/CD environment is ready for deployment scripts"
 else
     echo "🚀 System is ready for ArgoCD deployment operations"

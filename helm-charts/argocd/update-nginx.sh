@@ -21,7 +21,7 @@ if ! command -v kubectl &> /dev/null; then
 fi
 
 # Check if we can connect to Kubernetes cluster (skip in CI/CD environments)
-if [ -n "$GITHUB_ACTIONS" ] || [ -n "$CI" ]; then
+if [ "$GITHUB_ACTIONS" = "true" ] || [ "$CI" = "true" ] || [ -n "$RUNNER_OS" ] || [ -n "$GITHUB_WORKFLOW" ]; then
     echo "🤖 CI/CD environment detected - nginx scripts will be deployed"
     echo "✅ Configuration will be applied during actual deployment"
     exit 0
