@@ -78,6 +78,13 @@ jobs:
           rm argocd-linux-amd64
           echo "ArgoCD CLI installed successfully."
         
+      - name: Fix ArgoCD connectivity
+        shell: bash
+        run: |
+          # Update nginx proxy configuration for ArgoCD
+          chmod +x helm-charts/argocd/update-nginx.sh
+          sudo ./helm-charts/argocd/update-nginx.sh
+
       - name: ArgoCD sync
         shell: bash
         run: | 
