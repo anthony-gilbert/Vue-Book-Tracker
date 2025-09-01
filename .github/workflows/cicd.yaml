@@ -93,7 +93,7 @@ jobs:
             --repo https://github.com/anthonygilbertt/Vue-Book-Tracker.git \
             --path helm-charts/book-tracker \
             --dest-server https://kubernetes.default.svc \
-            --dest-namespace default \
+            --dest-namespace book-tracker \
             --grpc-web || true
           argocd app sync book-tracker --grpc-web
           echo "ArgoCD sync completed successfully."
