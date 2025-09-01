@@ -19,7 +19,7 @@ func main() {
 				<title>Sample HTML Page</title>
 			</head>
 			<body>
-				<h1>Hello, World!</h1>
+				<h1>Hello, World!!</h1>
 				<p>This is a sample HTML page served by a Go HTTP server.</p>
 			</body>
 			</html>
