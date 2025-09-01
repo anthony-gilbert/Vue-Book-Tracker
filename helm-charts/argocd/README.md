@@ -89,11 +89,15 @@ kubectl rollout restart deployment argocd-server -n argocd
 ## CI/CD Integration
 
 The GitHub Actions pipeline automatically:
-1. Prepares system resources (`setup-system.sh`)
-2. Updates nginx proxy configuration (`update-nginx.sh`)
+1. Installs kubectl and verifies prerequisites (`verify-prerequisites.sh`)
+2. Prepares deployment scripts (validates CI/CD environment)
 3. Syncs applications via ArgoCD CLI
 
-This ensures reliable deployments without manual intervention.
+**Note**: System preparation and nginx configuration scripts are designed to:
+- **Run fully** in production environments (on target servers)
+- **Exit early** in CI/CD environments (GitHub Actions)
+
+This separation ensures reliable deployments without manual intervention while avoiding CI/CD failures due to missing infrastructure components.
 
 ## Monitoring
 

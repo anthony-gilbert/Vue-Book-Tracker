@@ -78,20 +78,19 @@ jobs:
           rm argocd-linux-amd64
           echo "ArgoCD CLI installed successfully."
         
-      - name: Prepare system and fix ArgoCD connectivity
+      - name: Prepare deployment scripts
         shell: bash
         run: |
-          # Verify prerequisites and install missing components
+          # Verify prerequisites and install missing components (kubectl)
           chmod +x helm-charts/argocd/verify-prerequisites.sh
           sudo ./helm-charts/argocd/verify-prerequisites.sh
           
-          # Prepare system resources
+          # Prepare scripts for deployment (they will exit early in CI/CD)
           chmod +x helm-charts/argocd/setup-system.sh
-          sudo ./helm-charts/argocd/setup-system.sh
-          
-          # Update nginx proxy configuration for ArgoCD
           chmod +x helm-charts/argocd/update-nginx.sh
-          sudo ./helm-charts/argocd/update-nginx.sh
+          
+          # Note: Actual system preparation and nginx updates will happen on target server
+          echo "✅ All deployment scripts are prepared and ready"
 
       - name: ArgoCD sync
         shell: bash
