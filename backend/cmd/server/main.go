@@ -33,9 +33,16 @@ func main() {
 
 	// CORS middleware
 	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"http://localhost:5001", "http://localhost:5002", "http://localhost:3000"}
+	config.AllowOrigins = []string{
+		"http://localhost:5001", 
+		"http://localhost:5002", 
+		"http://localhost:3000",
+		"https://booktracker.dev",
+		"http://booktracker.dev",
+	}
 	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
 	config.AllowHeaders = []string{"Origin", "Content-Type", "Accept", "Authorization"}
+	config.AllowCredentials = true
 	r.Use(cors.New(config))
 
 	// Health check endpoint

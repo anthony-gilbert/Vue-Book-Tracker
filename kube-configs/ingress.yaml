@@ -10,13 +10,20 @@ metadata:
     nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, PUT, DELETE, OPTIONS"
     nginx.ingress.kubernetes.io/cors-allow-headers: "Origin, Content-Type, Accept, Authorization"
 spec:
-  ingressClassName: traefik
+  ingressClassName: nginx
   rules:
   - host: booktracker.dev
     http:
       paths:
-      - path: /api/
+      - path: /api
         pathType: Prefix
+        backend:
+          service:
+            name: book-tracker-backend-service
+            port:
+              number: 8080
+      - path: /health
+        pathType: Exact
         backend:
           service:
             name: book-tracker-backend-service
