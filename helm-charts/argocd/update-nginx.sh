@@ -1,58 +1,65 @@
 #!/bin/bash
 
-# Update nginx configuration with current ArgoCD pod IPs
-# Run this script if ArgoCD pods restart and you get 502 errors
+# Update nginx configuration with current ArgoCD service IPs (more stable than pod IPs)
+# This ensures ArgoCD connectivity after deployments
 
 set -e
 
 DOMAIN="argocd.booktracker.dev"
 NAMESPACE="argocd"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+TEMPLATE_FILE="$SCRIPT_DIR/../../nginx-config/argocd-proxy.template"
+NGINX_CONFIG="/etc/nginx/sites-available/argocd-proxy"
 
-echo "Updating nginx configuration for $DOMAIN..."
+echo "🔧 Updating nginx configuration for $DOMAIN..."
 
-# Get current ArgoCD server pod IP
-ARGOCD_POD_IP=$(kubectl get endpoints argocd-server -n $NAMESPACE -o jsonpath='{.subsets[0].addresses[0].ip}')
+# Get ArgoCD server service IP (stable)
+ARGOCD_SERVICE_IP=$(kubectl get service argocd-server -n $NAMESPACE -o jsonpath='{.spec.clusterIP}')
 
-if [ -z "$ARGOCD_POD_IP" ]; then
-    echo "Error: Could not get ArgoCD server pod IP"
-    echo "Make sure ArgoCD pods are running: kubectl get pods -n $NAMESPACE"
+if [ -z "$ARGOCD_SERVICE_IP" ]; then
+    echo "❌ Error: Could not get ArgoCD server service IP"
+    echo "Make sure ArgoCD service exists: kubectl get svc -n $NAMESPACE"
     exit 1
 fi
 
-echo "Current ArgoCD pod IP: $ARGOCD_POD_IP"
+echo "📍 ArgoCD service IP: $ARGOCD_SERVICE_IP"
 
-# Get current challenge pod IP if it exists
-CHALLENGE_POD_IP=""
-if kubectl get pods -n argocd | grep -q "cm-acme-http-solver"; then
-    CHALLENGE_POD_IP=$(kubectl get endpoints -n argocd | grep cm-acme-http-solver | awk '{print $2}' | cut -d: -f1)
-    echo "Current challenge pod IP: $CHALLENGE_POD_IP"
-fi
-
-# Get current configuration
-CURRENT_ARGOCD_IP=$(grep -oP 'proxy_pass http://\K[^:]+' /etc/nginx/sites-available/argocd-proxy | grep -E '^10\.' | head -1)
-
-if [ "$CURRENT_ARGOCD_IP" = "$ARGOCD_POD_IP" ]; then
-    echo "✅ Nginx configuration is already up to date"
-    exit 0
-fi
-
-echo "Updating ArgoCD pod IP from $CURRENT_ARGOCD_IP to $ARGOCD_POD_IP"
-
-# Update ArgoCD pod IP in nginx config
-sed -i "s|proxy_pass http://$CURRENT_ARGOCD_IP:8080|proxy_pass http://$ARGOCD_POD_IP:8080|g" /etc/nginx/sites-available/argocd-proxy
-
-# Update challenge pod IP if it exists
-if [ -n "$CHALLENGE_POD_IP" ]; then
-    CURRENT_CHALLENGE_IP=$(grep -oP 'proxy_pass http://\K[^:]+(?=:8089)' /etc/nginx/sites-available/argocd-proxy || true)
-    if [ -n "$CURRENT_CHALLENGE_IP" ] && [ "$CURRENT_CHALLENGE_IP" != "$CHALLENGE_POD_IP" ]; then
-        echo "Updating challenge pod IP from $CURRENT_CHALLENGE_IP to $CHALLENGE_POD_IP"
-        sed -i "s|proxy_pass http://$CURRENT_CHALLENGE_IP:8089|proxy_pass http://$CHALLENGE_POD_IP:8089|g" /etc/nginx/sites-available/argocd-proxy
+# Get current challenge pod IP if it exists (for Let's Encrypt)
+CHALLENGE_SERVICE_IP="10.42.0.35"  # Default fallback
+if kubectl get pods -n argocd 2>/dev/null | grep -q "cm-acme-http-solver"; then
+    CHALLENGE_POD_IP=$(kubectl get pods -n argocd -o wide 2>/dev/null | grep "cm-acme-http-solver" | awk '{print $6}' | head -1)
+    if [ -n "$CHALLENGE_POD_IP" ]; then
+        CHALLENGE_SERVICE_IP="$CHALLENGE_POD_IP"
     fi
 fi
 
-# Test and reload nginx
-nginx -t
+echo "🔒 Challenge service IP: $CHALLENGE_SERVICE_IP"
+
+# Check if template exists
+if [ ! -f "$TEMPLATE_FILE" ]; then
+    echo "❌ Template file not found: $TEMPLATE_FILE"
+    exit 1
+fi
+
+# Create nginx config from template
+echo "📝 Generating nginx configuration from template..."
+cp "$TEMPLATE_FILE" "$NGINX_CONFIG"
+
+# Replace placeholders
+sed -i "s|{{ARGOCD_SERVICE_IP}}|$ARGOCD_SERVICE_IP|g" "$NGINX_CONFIG"
+sed -i "s|{{CHALLENGE_SERVICE_IP}}|$CHALLENGE_SERVICE_IP|g" "$NGINX_CONFIG"
+
+# Test nginx configuration
+echo "✅ Testing nginx configuration..."
+if ! nginx -t; then
+    echo "❌ Nginx configuration test failed"
+    exit 1
+fi
+
+# Reload nginx
+echo "🔄 Reloading nginx..."
 systemctl reload nginx
 
 echo "✅ Nginx configuration updated successfully"
 echo "🌐 ArgoCD should now be accessible at https://$DOMAIN"
+echo "🔍 Service-based configuration is more stable than pod-based"

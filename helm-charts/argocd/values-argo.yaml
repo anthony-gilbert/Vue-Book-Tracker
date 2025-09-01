@@ -22,14 +22,12 @@ server:
     maxReplicas: 2
   resources:
     limits:
-      cpu: 100m
-      memory: 128Mi
+      cpu: 500m
+      memory: 512Mi
     requests:
-      cpu: 50m
-      memory: 64Mi
+      cpu: 200m
+      memory: 256Mi
   ingress:
-    annotations:
-      traefik.ingress.kubernetes.io/backend-protocol: "HTTPS"
     enabled: true
     ingressClassName: traefik
     hosts:
@@ -46,11 +44,11 @@ repoServer:
     maxReplicas: 2
   resources:
     limits:
-      cpu: 100m
-      memory: 256Mi
+      cpu: 300m
+      memory: 512Mi
     requests:
-      cpu: 50m
-      memory: 128Mi
+      cpu: 150m
+      memory: 256Mi
 
 applicationSet:
   replicas: 1

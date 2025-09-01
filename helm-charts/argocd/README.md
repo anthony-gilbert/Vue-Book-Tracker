@@ -1,103 +1,100 @@
-# ArgoCD Helm Configuration
+# ArgoCD Setup and Maintenance
 
-This directory contains the Helm configuration for deploying ArgoCD with external domain access.
+This directory contains the configuration and scripts for ArgoCD deployment on the book tracker infrastructure.
 
-## Quick Setup
+## Files Overview
 
-1. **Add DNS record** for your domain pointing to your server IP:
-   ```
-   Type: A
-   Name: argocd.booktracker.dev
-   Value: 143.198.49.14
-   ```
+- `values-argo.yaml` - Helm values for ArgoCD with optimized resource limits
+- `update-nginx.sh` - Script to update nginx proxy configuration 
+- `setup-system.sh` - System preparation script for resource management
+- `../nginx-config/argocd-proxy.template` - Nginx configuration template
 
-2. **Run the setup script**:
-   ```bash
-   chmod +x setup.sh setup-nginx.sh update-nginx.sh
-   ./setup.sh
-   ```
+## Resource Configuration
 
-3. **Access ArgoCD**:
-   - URL: https://argocd.booktracker.dev
-   - Username: `admin`
-   - Password: Run `kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d`
+The ArgoCD deployment is configured with the following resource limits to prevent 502 errors:
 
-## Files
+```yaml
+server:
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 200m
+      memory: 256Mi
 
-- `values-argo.yaml` - Helm values for ArgoCD configuration
-- `cluster-issuer.yaml` - Let's Encrypt certificate issuer
-- `certificate.yaml` - SSL certificate configuration
-- `setup.sh` - Main setup script
-- `setup-nginx.sh` - Nginx reverse proxy setup
-- `update-nginx.sh` - Update nginx when pods restart
-- `Argo-Fix.md` - Detailed troubleshooting documentation
-
-## Manual Setup
-
-If the automated setup doesn't work, follow these steps:
-
-### 1. Install ArgoCD
-```bash
-helm repo add argo https://argoproj.github.io/argo-helm
-helm repo update
-kubectl create namespace argocd
-helm install argocd argo/argo-cd -n argocd -f values-argo.yaml
+repoServer:
+  resources:
+    limits:
+      cpu: 300m
+      memory: 512Mi
+    requests:
+      cpu: 150m
+      memory: 256Mi
 ```
 
-### 2. Configure SSL Certificates
-```bash
-kubectl apply -f cluster-issuer.yaml
-kubectl apply -f certificate.yaml
-```
+## Architecture
 
-### 3. Configure ArgoCD for Reverse Proxy
-```bash
-kubectl patch configmap argocd-cmd-params-cm -n argocd --type merge -p '{"data":{"server.insecure":"true"}}'
-kubectl patch configmap argocd-cm -n argocd --type merge -p '{"data":{"url":"https://argocd.booktracker.dev"}}'
-kubectl rollout restart deployment argocd-server -n argocd
-```
-
-### 4. Setup Nginx Reverse Proxy
-```bash
-# Get ArgoCD pod IP
-ARGOCD_POD_IP=$(kubectl get endpoints argocd-server -n argocd -o jsonpath='{.subsets[0].addresses[0].ip}')
-
-# Run nginx setup
-./setup-nginx.sh argocd.booktracker.dev $ARGOCD_POD_IP
-```
+The deployment uses a hybrid approach:
+1. **Kubernetes Ingress**: Traefik handles internal routing
+2. **Nginx Proxy**: Host-level nginx proxies to Kubernetes services for SSL termination
+3. **Service IPs**: Uses stable Kubernetes service IPs instead of pod IPs
 
 ## Troubleshooting
 
-### 502 Bad Gateway
-This usually means ArgoCD pods have restarted and have new IPs. Run:
+### 502 Bad Gateway Errors
+
+If you encounter 502 errors after deployment:
+
+1. **Check ArgoCD pods**:
+   ```bash
+   kubectl get pods -n argocd
+   ```
+
+2. **Run the nginx update script**:
+   ```bash
+   sudo ./update-nginx.sh
+   ```
+
+3. **Check system resources**:
+   ```bash
+   free -h
+   df -h
+   ```
+
+### Common Issues
+
+1. **Resource Constraints**: Ensure server has at least 1GB available memory
+2. **Disk Space**: Keep disk usage below 85%
+3. **Service IP Changes**: Service IPs are stable, but if they change, run `update-nginx.sh`
+
+### Manual Recovery
+
+If ArgoCD is completely down:
+
 ```bash
-./update-nginx.sh
+# 1. Prepare system
+sudo ./setup-system.sh
+
+# 2. Update nginx configuration
+sudo ./update-nginx.sh
+
+# 3. Restart ArgoCD deployment if needed
+kubectl rollout restart deployment argocd-server -n argocd
 ```
 
-### Redirect Loop
-Make sure ArgoCD is configured with `server.insecure: true`:
-```bash
-kubectl get configmap argocd-cmd-params-cm -n argocd -o yaml | grep insecure
-```
+## CI/CD Integration
 
-### Certificate Issues
-Check certificate status:
-```bash
-kubectl get certificate -n argocd
-kubectl describe certificate argocd-server-tls -n argocd
-```
+The GitHub Actions pipeline automatically:
+1. Prepares system resources (`setup-system.sh`)
+2. Updates nginx proxy configuration (`update-nginx.sh`)
+3. Syncs applications via ArgoCD CLI
 
-### DNS Issues
-Verify DNS resolution:
-```bash
-dig argocd.booktracker.dev
-nslookup argocd.booktracker.dev
-```
+This ensures reliable deployments without manual intervention.
 
-## Configuration Details
+## Monitoring
 
-- **ArgoCD Version**: v3.1.1
-- **Ingress**: Traefik with NodePort service
-- **SSL**: Let's Encrypt via cert-manager
-- **Reverse Proxy**: Nginx handling external traffic
-- **Authentication**: Default admin user
+Check ArgoCD health:
+- Web UI: https://argocd.booktracker.dev
+- CLI: `argocd app list`
+- Kubernetes: `kubectl get pods -n argocd`

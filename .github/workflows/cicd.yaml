@@ -77,6 +77,17 @@ jobs:
           sudo install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
           rm argocd-linux-amd64
           echo "ArgoCD CLI installed successfully."
+        
+      - name: Prepare system and fix ArgoCD connectivity
+        shell: bash
+        run: |
+          # Prepare system resources
+          chmod +x helm-charts/argocd/setup-system.sh
+          sudo ./helm-charts/argocd/setup-system.sh
+          
+          # Update nginx proxy configuration for ArgoCD
+          chmod +x helm-charts/argocd/update-nginx.sh
+          sudo ./helm-charts/argocd/update-nginx.sh
 
       - name: ArgoCD sync
         shell: bash
