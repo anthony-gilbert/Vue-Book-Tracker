@@ -24,13 +24,14 @@ COPY --from=build-stage /app/dist /usr/share/nginx/html
 
 # Copy custom nginx configuration  
 COPY /nginx-config/booktracker.dev /etc/nginx/sites-available/booktracker.dev
-COPY nginx-setup.sh /app
-# RUN chmod +x /app/nginx-setup.sh
+COPY nginx-setup.sh /app/nginx-setup.sh
+RUN chmod +x /app/nginx-setup.sh
 
 # Expose port 80
 EXPOSE 5001
 
 # Start nginx
+WORKDIR /app
 CMD ["./nginx-setup.sh"]
 
 # docker build -t vue-book-tracker-frontend:v1 .
