@@ -34,16 +34,40 @@ spec:
           value: "true"
         - name: RUNNER_LABELS
           value: "kubernetes,self-hosted,vue-book-tracker"
+        - name: RUNNER_ALLOW_RUNASROOT
+          value: "1"
+        - name: DEBIAN_FRONTEND
+          value: noninteractive
         volumeMounts:
         - name: runner-workdir
           mountPath: /runner
         resources:
           requests:
-            memory: "256Mi"
-            cpu: "250m"
+            memory: "128Mi"
+            cpu: "100m"
           limits:
-            memory: "512Mi"
-            cpu: "500m"
+            memory: "256Mi"
+            cpu: "200m"
+        livenessProbe:
+          exec:
+            command:
+            - /bin/sh
+            - -c
+            - "ps aux | grep -v grep | grep Runner.Listener || exit 1"
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 3
+        readinessProbe:
+          exec:
+            command:
+            - /bin/sh
+            - -c
+            - "ps aux | grep -v grep | grep Runner.Listener || exit 1"
+          initialDelaySeconds: 30
+          periodSeconds: 15
+          timeoutSeconds: 5
+          failureThreshold: 3
       volumes:
       - name: runner-workdir
         emptyDir: {}
