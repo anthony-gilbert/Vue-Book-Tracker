@@ -81,6 +81,10 @@ jobs:
       - name: Prepare system and fix ArgoCD connectivity
         shell: bash
         run: |
+          # Verify prerequisites and install missing components
+          chmod +x helm-charts/argocd/verify-prerequisites.sh
+          sudo ./helm-charts/argocd/verify-prerequisites.sh
+          
           # Prepare system resources
           chmod +x helm-charts/argocd/setup-system.sh
           sudo ./helm-charts/argocd/setup-system.sh

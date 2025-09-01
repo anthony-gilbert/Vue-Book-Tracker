@@ -5,8 +5,9 @@ This directory contains the configuration and scripts for ArgoCD deployment on t
 ## Files Overview
 
 - `values-argo.yaml` - Helm values for ArgoCD with optimized resource limits
-- `update-nginx.sh` - Script to update nginx proxy configuration 
+- `verify-prerequisites.sh` - Verification script that checks and installs prerequisites (including kubectl)
 - `setup-system.sh` - System preparation script for resource management
+- `update-nginx.sh` - Script to update nginx proxy configuration 
 - `../nginx-config/argocd-proxy.template` - Nginx configuration template
 
 ## Resource Configuration
@@ -64,9 +65,11 @@ If you encounter 502 errors after deployment:
 
 ### Common Issues
 
-1. **Resource Constraints**: Ensure server has at least 1GB available memory
-2. **Disk Space**: Keep disk usage below 85%
-3. **Service IP Changes**: Service IPs are stable, but if they change, run `update-nginx.sh`
+1. **kubectl not found**: The verification script automatically installs kubectl if missing
+2. **Resource Constraints**: Ensure server has at least 1GB available memory
+3. **Disk Space**: Keep disk usage below 85%
+4. **Service IP Changes**: Service IPs are stable, but if they change, run `update-nginx.sh`
+5. **CI/CD Pipeline Failures**: Check if kubectl is available and cluster is accessible
 
 ### Manual Recovery
 

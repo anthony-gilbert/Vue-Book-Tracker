@@ -13,12 +13,27 @@ NGINX_CONFIG="/etc/nginx/sites-available/argocd-proxy"
 
 echo "🔧 Updating nginx configuration for $DOMAIN..."
 
+# Check if kubectl is available
+if ! command -v kubectl &> /dev/null; then
+    echo "❌ Error: kubectl is not available"
+    echo "Please install kubectl or make sure it's in PATH"
+    exit 1
+fi
+
+# Check if we can connect to Kubernetes cluster
+if ! kubectl cluster-info &> /dev/null; then
+    echo "❌ Error: Cannot connect to Kubernetes cluster"
+    echo "Make sure kubectl is configured properly"
+    exit 1
+fi
+
 # Get ArgoCD server service IP (stable)
-ARGOCD_SERVICE_IP=$(kubectl get service argocd-server -n $NAMESPACE -o jsonpath='{.spec.clusterIP}')
+ARGOCD_SERVICE_IP=$(kubectl get service argocd-server -n $NAMESPACE -o jsonpath='{.spec.clusterIP}' 2>/dev/null)
 
 if [ -z "$ARGOCD_SERVICE_IP" ]; then
     echo "❌ Error: Could not get ArgoCD server service IP"
     echo "Make sure ArgoCD service exists: kubectl get svc -n $NAMESPACE"
+    kubectl get svc -n $NAMESPACE || true
     exit 1
 fi
 

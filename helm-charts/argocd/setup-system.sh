@@ -21,7 +21,8 @@ if [ "$AVAILABLE_MEM" -lt 200 ]; then
     # Clean up Docker/containerd if needed
     if command -v k3s >/dev/null 2>&1; then
         echo "🧹 Cleaning up container images..."
-        k3s crictl images prune || true
+        k3s crictl images prune 2>/dev/null || true
+        k3s crictl rmi --prune 2>/dev/null || true
     fi
     
     AVAILABLE_MEM_AFTER=$(free -m | awk 'NR==2{printf "%.0f", $7}')
