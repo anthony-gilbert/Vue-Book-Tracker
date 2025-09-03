@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - backend
+    environment:
+      - VUE_APP_API_URL=http://localhost:8080
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+    networks:
+      - book-tracker-network
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - GIN_MODE=release
+      - DB_PATH=/app/data/books.db
+      - JWT_SECRET=${JWT_SECRET}
+    volumes:
+      - sqlite_data:/app/data
+    networks:
+      - book-tracker-network
+    restart: unless-stopped
+
+volumes:
+  sqlite_data:
+    driver: local
+
+networks:
+  book-tracker-network:
+    driver: bridge
